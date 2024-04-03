@@ -30,13 +30,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     @Override
     public List<ScheduleDTO> viewSchedule(Long employeeId) {
         List<Schedule> schedules = scheduleRepository.findByEmployeeId(employeeId);
-        // return schedules.stream().map(schedule -> {
-        //     ScheduleDTO dto = new ScheduleDTO();
-        //     // Map schedule to ScheduleDTO
-        //     return dto;
-        // }).collect(Collectors.toList());
+
         return schedules.stream().map(schedule -> {
             ScheduleDTO dto = new ScheduleDTO();
+            dto.setId(schedule.getId());
             dto.setEmployee(schedule.getEmployee());
             dto.setStartTime(schedule.getStartTime());
             dto.setEndTime(schedule.getEndTime());

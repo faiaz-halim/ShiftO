@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional; // Correct import for Optional
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -45,26 +45,23 @@ public class HRServiceImpl implements HRService {
         Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + employeeId));
 
-        // Use the constructor with the correct arguments
         return new EmployeeDTO(employee.getId(), employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getRole().toString(), null, null);
     }
 
     @Override
     public void updateEmployeeInfo(EmployeeDTO employeeDTO) {
         Optional<Employee> employee = employeeRepository.findById(employeeDTO.getId());
-        if (employee.isPresent()) {
-            // Update employee fields from EmployeeDTO and save using employeeRepository
+        if (employee.isPresent()) { // not implemented
         }
     }
 
 @Override
     public List<ScheduleDTO> getEmployeeSchedule(Long employeeId) {
-        // Fetch schedules for the employee
         List<Schedule> schedules = scheduleRepository.findByEmployeeId(employeeId);
 
-        // Convert each Schedule entity to a ScheduleDTO
         return schedules.stream().map(schedule -> {
             ScheduleDTO dto = new ScheduleDTO();
+            dto.setId(schedule.getId());
             dto.setEmployee(schedule.getEmployee());
             dto.setStartTime(schedule.getStartTime());
             dto.setEndTime(schedule.getEndTime());
@@ -92,15 +89,13 @@ public class HRServiceImpl implements HRService {
         ScheduleRequest request = scheduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("ScheduleRequest not found with id: " + requestId));
 
-        // Assuming we directly modify and approve the original schedule
         Schedule schedule = request.getSchedule();
         schedule.setStartTime(request.getRequestedStartTime());
         schedule.setEndTime(request.getRequestedEndTime());
-        schedule.setStatus(com.shiftO.model.Schedule.Status.Approved); // Adjust according to your enum
+        schedule.setStatus(com.shiftO.model.Schedule.Status.Approved);
         scheduleRepository.save(schedule);
 
-        // Optionally, update the request status to Approved if needed
-        request.setStatus(com.shiftO.model.ScheduleRequest.Status.Approved); // Adjust according to your enum
+        request.setStatus(com.shiftO.model.ScheduleRequest.Status.Approved);
         scheduleRequestRepository.save(request);
     }
 
@@ -109,8 +104,7 @@ public class HRServiceImpl implements HRService {
         ScheduleRequest request = scheduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("ScheduleRequest not found with id: " + requestId));
 
-        // Just set the request status to Rejected without changing the original schedule
-        request.setStatus(com.shiftO.model.ScheduleRequest.Status.Rejected); // Adjust according to your enum
+        request.setStatus(com.shiftO.model.ScheduleRequest.Status.Rejected);
         scheduleRequestRepository.save(request);
     }
 }

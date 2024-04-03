@@ -65,14 +65,14 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public void assignSchedule(ScheduleDTO scheduleDTO) {
-        Schedule schedule = new Schedule();
-        // Populate schedule fields from scheduleDTO and save using scheduleRepository
+        Schedule schedule = new Schedule(); // not implemented
     }
 
     @Override
     public List<ScheduleDTO> viewAllSchedules() {
         return scheduleRepository.findAll().stream().map(schedule -> {
             ScheduleDTO dto = new ScheduleDTO();
+            dto.setId(schedule.getId());
             dto.setEmployee(schedule.getEmployee());
             dto.setStartTime(schedule.getStartTime());
             dto.setEndTime(schedule.getEndTime());
@@ -95,14 +95,12 @@ public class AdminServiceImpl implements AdminService {
         ScheduleRequest request = scheduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("ScheduleRequest not found with id: " + requestId));
 
-        // Assuming we directly modify and approve the original schedule
         Schedule schedule = request.getSchedule();
         schedule.setStartTime(request.getRequestedStartTime());
         schedule.setEndTime(request.getRequestedEndTime());
         schedule.setStatus(com.shiftO.model.Schedule.Status.Approved);
         scheduleRepository.save(schedule);
 
-        // Optionally, update the request status to Approved if needed
         request.setStatus(com.shiftO.model.ScheduleRequest.Status.Approved);
         scheduleRequestRepository.save(request);
     }
@@ -112,7 +110,6 @@ public class AdminServiceImpl implements AdminService {
         ScheduleRequest request = scheduleRequestRepository.findById(requestId)
                 .orElseThrow(() -> new RuntimeException("ScheduleRequest not found with id: " + requestId));
 
-        // Just set the request status to Rejected without changing the original schedule
         request.setStatus(com.shiftO.model.ScheduleRequest.Status.Rejected);
         scheduleRequestRepository.save(request);
     }
